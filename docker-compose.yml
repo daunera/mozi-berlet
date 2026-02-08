@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build: ./backend
-    container_name: mozi-backend
+    container_name: what-to-cinema-backend
     restart: always
     environment:
       - API_KEY=${API_KEY}
@@ -16,15 +16,15 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: mozi-frontend
+    container_name: what-to-cinema-frontend
     restart: always
     expose:
       - 3000
     environment:
-      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
       - BACKEND_URL=http://backend:8000/api
       - API_KEY=${API_KEY}
       - AUTH_PASSCODE=${AUTH_PASSCODE}
+      - APP_LOCALE=${APP_LOCALE}
     depends_on:
       - backend
     networks:
