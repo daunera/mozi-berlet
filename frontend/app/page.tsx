@@ -35,6 +35,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedCinema, setSelectedCinema] = useState<string | null>(null);
   const [lastScraped, setLastScraped] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -131,12 +132,20 @@ export default function Home() {
   };
 
   // Process data for view
-  const { dates, favoritesList, otherMovies } = useMemo(() => {
+  const { dates, favoritesList, otherMovies, cinemas } = useMemo(() => {
     // Extract unique dates
     const uniqueDates = Array.from(new Set(showtimes.map(st => st.date_str))).sort();
 
     // Filter by selected date
-    const filteredShowtimes = showtimes.filter(st => st.date_str === selectedDate);
+    const showtimesForDate = showtimes.filter(st => st.date_str === selectedDate);
+
+    // Extract unique cinemas for the selected date
+    const uniqueCinemas = Array.from(new Set(showtimesForDate.map(st => st.cinema_name))).sort();
+
+    // Filter by selected cinema
+    const filteredShowtimes = selectedCinema
+      ? showtimesForDate.filter(st => st.cinema_name === selectedCinema)
+      : showtimesForDate;
 
     // Group by Movie
     const moviesMap = new Map();
@@ -179,9 +188,10 @@ export default function Home() {
     return {
       dates: uniqueDates,
       favoritesList: favoriteMovies.sort(sortFn),
-      otherMovies: regularMovies.sort(sortFn)
+      otherMovies: regularMovies.sort(sortFn),
+      cinemas: uniqueCinemas
     };
-  }, [showtimes, selectedDate, favorites]);
+  }, [showtimes, selectedDate, favorites, selectedCinema]);
 
 
   return (
@@ -276,6 +286,9 @@ export default function Home() {
                 dates={dates}
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
+                cinemas={cinemas}
+                selectedCinema={selectedCinema}
+                onSelectCinema={setSelectedCinema}
               />
             </div>
 
