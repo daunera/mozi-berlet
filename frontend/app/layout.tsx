@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { getDictionary, Locale } from "@/lib/dictionaries";
 import "./globals.css";
 
+export const dynamic = 'force-dynamic';
+
 const locale = (process.env.APP_LOCALE as Locale) || 'en';
 const dict = getDictionary(locale);
 

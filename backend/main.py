@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Mozi Berlet API",
+    title="WhatToCinema API",
     description="API for movie showtimes. Requires 'X-API-Key' header.",
     version="1.0.0",
     # This ensures the Authorize button is available for the defined security scheme
