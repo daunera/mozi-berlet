@@ -303,7 +303,7 @@ export default function Home() {
             ))}
 
             {favoritesList.length > 0 && otherMovies.length > 0 && (
-              <hr className="my-6 border-border" />
+              <hr className="my-2 border-border" />
             )}
 
             {otherMovies.map((movie) => (
