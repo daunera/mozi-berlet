@@ -136,13 +136,11 @@ export default function MovieListRow({ movie, onToggleFavorite }: MovieListRowPr
                                     age={movie.age_restriction}
                                 />
                             )}
-                            <div className="flex flex-wrap gap-1.5">
-                                {genres.map((genre, idx) => (
-                                    <span key={idx} className="text-xs font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-full whitespace-nowrap bg-muted/30">
-                                        {genre}
-                                    </span>
-                                ))}
-                            </div>
+                            {genres.map((genre, idx) => (
+                                <span key={idx} className="text-xs font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-full whitespace-nowrap bg-muted/30">
+                                    {genre}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </div>
