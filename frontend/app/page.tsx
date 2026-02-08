@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import api, { getFavorites, addFavorite, removeFavorite, getStatus, triggerScrape } from '@/lib/api';
+import { logout } from '@/app/actions/auth';
 import DateTabs from '@/components/DateTabs';
 import MovieListRow from '@/components/MovieListRow';
 import { format } from 'date-fns';
@@ -36,7 +37,7 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [lastScraped, setLastScraped] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
-
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   // Fetch initial data
   useEffect(() => {
@@ -120,6 +121,15 @@ export default function Home() {
     }
   };
 
+  const handleLogoutClick = () => {
+    setIsLogoutOpen(true);
+  };
+
+  const confirmLogout = async () => {
+    await logout();
+    window.location.reload();
+  };
+
   // Process data for view
   const { dates, favoritesList, otherMovies } = useMemo(() => {
     // Extract unique dates
@@ -175,9 +185,9 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen pb-20 bg-background text-foreground">
+    <main className="min-h-screen pb-10 bg-background text-foreground">
       {/* Header */}
-      <header className="sticky top-0 z-30 glass shadow-sm">
+      <header className="glass shadow-sm">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo / App Name */}
           <div className="flex items-center gap-4 mr-2 md:mr-8 flex-shrink-0">
@@ -192,45 +202,64 @@ export default function Home() {
               )}
             </div>
 
+
+          </div>
+
+          <div className="flex-1 flex justify-end gap-2">
             <button
               onClick={handleSync}
               disabled={isSyncing}
-              className={`p-2 rounded-full transition-all duration-300 ${isSyncing
-                ? "animate-spin text-primary"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${isSyncing
+                ? "bg-primary/80 text-primary-foreground cursor-wait"
+                : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                 }`}
               title="Műsor frissítése"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className={isSyncing ? "animate-spin" : ""}
               >
                 <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
                 <path d="M21 3v5h-5" />
               </svg>
+              <span>Frissítés</span>
             </button>
-          </div>
 
-          {/* Date Tabs (integrated into header) */}
-          <div className="flex-1 flex justify-end">
-            <DateTabs
-              dates={dates}
-              selectedDate={selectedDate}
-              onSelectDate={setSelectedDate}
-            />
+            <button
+              onClick={handleLogoutClick}
+              className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+              title="Kijelentkezés"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </button>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 pt-8">
+      <div className="max-w-4xl mx-auto px-4 pt-3">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 opacity-50">
             <div>Műsor betöltése...</div>
@@ -241,6 +270,15 @@ export default function Home() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
+            {/* Date Tabs (moved to content) */}
+            <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-md mb-0 -mx-4 px-4 md:mx-0 md:px-0">
+              <DateTabs
+                dates={dates}
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+              />
+            </div>
+
             {favoritesList.map((movie) => (
               <MovieListRow
                 key={movie.title}
@@ -263,6 +301,32 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {isLogoutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <div className="bg-card border border-border rounded-lg shadow-lg max-w-sm w-full p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Kijelentkezés</h3>
+            <p className="text-muted-foreground">
+              Biztosan ki szeretnél jelentkezni?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsLogoutOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+              >
+                Mégsem
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 text-sm font-medium text-destructive-foreground bg-destructive hover:bg-destructive/90 rounded-md transition-colors"
+              >
+                Kijelentkezés
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

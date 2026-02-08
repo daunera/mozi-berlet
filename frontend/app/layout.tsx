@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 };
 
 import PasscodeGate from "@/components/PasscodeGate";
-import LogoutButton from "@/components/LogoutButton";
 
 export default function RootLayout({
   children,
@@ -38,9 +37,6 @@ export default function RootLayout({
           <div className="flex-1">
             {children}
           </div>
-          <footer className="py-8 flex justify-center mt-auto">
-            <LogoutButton />
-          </footer>
         </PasscodeGate>
       </body>
     </html>

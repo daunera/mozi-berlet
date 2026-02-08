@@ -97,3 +97,14 @@ body {
   background-image: linear-gradient(to right, #e4e4e7, #a1a1aa);
   /* Zinc 200 to Zinc 400 */
 }
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
